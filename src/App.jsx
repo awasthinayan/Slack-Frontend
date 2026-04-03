@@ -1,14 +1,13 @@
-import React from 'react';
-
-import { Button } from '@/components/ui/button';
+import Modals from '@/components/Organisms/Modals/Modals';
+import { AppContextProvider } from '@/Context/AppContextProvider';
+import { AppRoutes } from '@/Routes/AppRoutes';
 
 const App = () => {
   return (
-    <div className="m-2 p-4 border-2">
-      App
-      <Button className="cursor-pointer">click here</Button>
-    </div>
+    <AppContextProvider>
+      <AppRoutes />
+      <Modals />
+    </AppContextProvider>
   );
 };
-
 export default App;
