@@ -54,3 +54,26 @@ export const getWorkspaceDetails = async (workspaceId, token ) => {
   }
 };
 
+export const updateWorkspaceRequest = async ({
+  workspaceId,
+  workspaceName,
+  description,
+  token,
+}) => {
+  try {
+    const response = await axios.put(
+      `/workspaces/updateWorkspace/${workspaceId}`,
+      { workspaceName, description },
+      {
+        headers: {
+          'x-access-token': token,
+        },
+      }
+    );
+    console.log('Response for update workspace', response);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    throw error.response?.data;
+  }
+};

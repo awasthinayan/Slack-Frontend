@@ -59,22 +59,25 @@ export const SignInContainer = () => {
     : '';
 
   useEffect(() => {
-    if (!isSuccess || !data?.token) {
+    const loginData = data?.data;
+
+    if (!isSuccess || !loginData?.token) {
       return;
     }
 
     const user = {
-      email: formData.email.trim(),
+      _id: loginData._id || loginData.id,
+      email: loginData.email || formData.email.trim(),
     };
     const authExpiry = Date.now() + AUTH_SESSION_DURATION_MS;
 
-    localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+    localStorage.setItem(AUTH_TOKEN_KEY, loginData.token);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
     localStorage.setItem(AUTH_EXPIRY_KEY, authExpiry.toString());
 
     setAuth({
       user,
-      token: data.token,
+      token: loginData.token,
       isloading: false,
     });
 

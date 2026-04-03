@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { WorkspaceOptions } from '@/components/Organisms/Workspace/WorkspaceOptions';
+import { WorkspacePanel } from '@/components/Organisms/Workspace/WorkspacePanel';
 import { WorkspaceSidebar } from '@/components/Organisms/Workspace/WorkspaceSidebar';
 import {
   ResizableHandle,
@@ -43,8 +44,8 @@ export const WorkspaceLayout = ({ children }) => {
               minSize={0}
               maxSize="60vw"
             >
-              <div className="h-full w-full bg-[#cde8e5] flex items-center justify-center">
-                My Workspace
+              <div className="h-full w-full bg-[#cde8e5] flex ">
+                <WorkspacePanel />
               </div>
             </ResizablePanel>
 
