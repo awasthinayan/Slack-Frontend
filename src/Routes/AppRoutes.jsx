@@ -7,6 +7,7 @@ import { SignInPage } from '@/Pages/Auth/SignInPage';
 import { SignUpPage } from '@/Pages/Auth/SignUpPage';
 import { ChannelPage } from '@/Pages/Channel/ChannelPage';
 import { Home } from '@/Pages/Home/Home';
+import { MemberPage } from '@/Pages/Member/MemberPage';
 import { GlobalErrorHandler } from '@/Pages/NotFound/GlobalErrorHandler';
 import { WelcomePage } from '@/Pages/Welcome/WelcomePage';
 import { WorkspaceLayout } from '@/Pages/Workspace/Layout';
@@ -46,6 +47,10 @@ export const AppRoutes = () => {
         <Route
           path="/workspace/:workspaceId/channels/:channelId"
           element={<ChannelPage />}
+        />
+        <Route
+          path="/workspace/:workspaceId/members/:memberId"
+          element={<MemberPage />}
         />
       </Route>
 

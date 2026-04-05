@@ -4,8 +4,9 @@ import {
   HashIcon,
   Loader,
   SendIcon,
+  UserIcon,
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { SideBarItem } from '@/components/Atoms/SideBarItem/SideBarItem';
 import { WorkspacePanelHeader } from '@/components/Molecules/Workspace/WorkspacePanelHeader';
@@ -14,10 +15,13 @@ import { useGetWorkspaceDetailsById } from '@/Hooks/Apis/Workspaces/useGetWorksp
 
 export const WorkspacePanel = () => {
   const { workspaceId } = useParams();
+  const location = useLocation();
 
   const { isFetching, workspace, isSuccess } =
     useGetWorkspaceDetailsById(workspaceId);
+
   const channels = workspace?.channels ?? [];
+  const members = workspace?.members ?? [];
 
   if (isFetching) {
     return (
@@ -35,6 +39,7 @@ export const WorkspacePanel = () => {
       </div>
     );
   }
+
   return (
     <div className="flex h-full w-full flex-col">
       <WorkspacePanelHeader workspace={workspace} />
@@ -65,12 +70,48 @@ export const WorkspacePanel = () => {
                 label={channel.ChannelName}
                 icon={HashIcon}
                 Id={channel._id}
-                variant="default"
+                variant={
+                  location.pathname.includes(`/channels/${channel._id}`)
+                    ? 'active'
+                    : 'default'
+                }
               />
             ))
           ) : (
             <p className="rounded-xl border border-dashed border-slate-300 bg-white/40 px-3 py-4 text-sm text-slate-600">
               No channels yet.
+            </p>
+          )}
+        </WorkspacePanelSection>
+
+        <WorkspacePanelSection title="Members">
+          {members.length ? (
+            members.map((member) => {
+              const memberUser = member?.memberId;
+              const memberName =
+                memberUser?.name ||
+                memberUser?.username ||
+                memberUser?.email ||
+                'Unknown member';
+
+              return (
+                <SideBarItem
+                  key={memberUser?._id || member?._id || memberName}
+                  icon={UserIcon}
+                  label={memberName}
+                  Id={memberUser?._id}
+                  variant={
+                    location.pathname.includes(`/members/${memberUser?._id}`)
+                      ? 'active'
+                      : 'default'
+                  }
+                  type="member"
+                />
+              );
+            })
+          ) : (
+            <p className="rounded-xl border border-dashed border-slate-300 bg-white/40 px-3 py-4 text-sm text-slate-600">
+              No members yet.
             </p>
           )}
         </WorkspacePanelSection>

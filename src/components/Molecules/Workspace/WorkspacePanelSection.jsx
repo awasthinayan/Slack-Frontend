@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { useCreateChannelModal } from '@/Hooks/Context/useCreateChannel';
+import { useCreateMemberModal } from '@/Hooks/Context/useCreateMember';
 
 export const WorkspacePanelSection = ({
   title,
@@ -11,10 +12,17 @@ export const WorkspacePanelSection = ({
   defaultOpen = true,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const { setOpentoCreateChannelModal, setSelectedWorkspaceId } =
-    useCreateChannelModal();
+  const {
+    setOpentoCreateChannelModal,
+    setSelectedWorkspaceId: setSelectedChannelWorkspaceId,
+  } = useCreateChannelModal();
+  const {
+    setOpentoCreateMemberModal,
+    setSelectedWorkspaceId: setSelectedMemberWorkspaceId,
+  } = useCreateMemberModal();
   const ToggleIcon = isOpen ? ChevronDownIcon : ChevronRightIcon;
   const isChannelSection = title?.trim().toLowerCase() === 'channels';
+  const isMemberSection = title?.trim().toLowerCase() === 'members';
 
   const { workspaceId } = useParams();
 
@@ -40,15 +48,22 @@ export const WorkspacePanelSection = ({
           ) : null}
         </div>
 
-        {isChannelSection ? (
+        {isChannelSection || isMemberSection ? (
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
             className="ml-auto rounded-full text-slate-600 hover:bg-white/60 hover:text-slate-900 cursor-pointer"
             onClick={() => {
-              setSelectedWorkspaceId(workspaceId);
-              setOpentoCreateChannelModal(true);
+              if (isChannelSection) {
+                setSelectedChannelWorkspaceId(workspaceId);
+                setOpentoCreateChannelModal(true);
+              }
+
+              if (isMemberSection) {
+                setSelectedMemberWorkspaceId(workspaceId);
+                setOpentoCreateMemberModal(true);
+              }
             }}
           >
             <PlusIcon className="size-4 shrink-0" />

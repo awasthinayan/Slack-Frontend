@@ -86,15 +86,45 @@ export const updateWorkspaceRequest = async ({
 
 export const deleteWorkspaceRequest = async ({ workspaceId, token }) => {
   try {
-    const response = await axios.delete(`/workspaces/deleteWorkspace/${workspaceId}`, {
-      headers: {
-        'x-access-token': token,
-      },
-    });
+    const response = await axios.delete(
+      `/workspaces/deleteWorkspace/${workspaceId}`,
+      {
+        headers: {
+          'x-access-token': token,
+        },
+      }
+    );
     console.log('Workspace Deleted Successfully', response);
     return response?.data;
   } catch (error) {
     console.log(error);
     throw error.response?.data;
+  }
+};
+
+export const addMemberToWorkspaceRequest = async ({
+  workspaceId,
+  memberId,
+  role,
+  token,
+}) => {
+  try {
+    const response = await axios.put(
+      `/workspaces/addMemberToWorkspace/${workspaceId}`,
+      { memberId, role },
+      {
+        headers: {
+          'x-access-token': token,
+        },
+      }
+    );
+    console.log('Response for add member to workspace', response);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    throw {
+      ...error.response?.data,
+      httpStatus: error.response?.status,
+    };
   }
 };
