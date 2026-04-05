@@ -16,6 +16,8 @@ export const useGetWorkspaceDetailsById = (id) => {
     enabled: Boolean(id && auth?.token),
     queryFn: () => getWorkspaceDetails(id, auth?.token),
     queryKey: [`getworkspaceById - ${id}`],
+    retry: false,
+    refetchOnWindowFocus: false,
     staleTime: 10000,
   });
 

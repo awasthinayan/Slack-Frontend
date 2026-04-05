@@ -26,11 +26,14 @@ export const createWorkspaceRequest = async ({
 
 export const fetchWorkspaceRequest = async ({ token }) => {
   try {
-    const response = await axios.get('/workspaces/fetchAllWorkspaceByMemberId', {
-      headers: {
-        'x-access-token': token,
-      },
-    });
+    const response = await axios.get(
+      '/workspaces/fetchAllWorkspaceByMemberId',
+      {
+        headers: {
+          'x-access-token': token,
+        },
+      }
+    );
     console.log('Response for fetch workspace', response);
     return response?.data.data;
   } catch (error) {
@@ -39,9 +42,9 @@ export const fetchWorkspaceRequest = async ({ token }) => {
   }
 };
 
-export const getWorkspaceDetails = async (workspaceId, token ) => {
+export const getWorkspaceDetails = async (workspaceId, token) => {
   try {
-   const response = await axios.get(`/workspaces/${workspaceId}`, {
+    const response = await axios.get(`/workspaces/${workspaceId}`, {
       headers: {
         'x-access-token': token,
       },
@@ -50,7 +53,10 @@ export const getWorkspaceDetails = async (workspaceId, token ) => {
     return response?.data.data;
   } catch (error) {
     console.log(error);
-    throw error.response?.data;
+    throw {
+      ...error.response?.data,
+      httpStatus: error.response?.status,
+    };
   }
 };
 
@@ -71,6 +77,21 @@ export const updateWorkspaceRequest = async ({
       }
     );
     console.log('Response for update workspace', response);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    throw error.response?.data;
+  }
+};
+
+export const deleteWorkspaceRequest = async ({ workspaceId, token }) => {
+  try {
+    const response = await axios.delete(`/workspaces/deleteWorkspace/${workspaceId}`, {
+      headers: {
+        'x-access-token': token,
+      },
+    });
+    console.log('Workspace Deleted Successfully', response);
     return response?.data;
   } catch (error) {
     console.log(error);

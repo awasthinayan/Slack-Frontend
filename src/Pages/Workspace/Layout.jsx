@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { WorkspaceOptions } from '@/components/Organisms/Workspace/WorkspaceOptions';
 import { WorkspacePanel } from '@/components/Organisms/Workspace/WorkspacePanel';
@@ -10,15 +10,28 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import { LAST_WORKSPACE_KEY } from '@/Context/AuthContext';
+import { useGetWorkspaceDetailsById } from '@/Hooks/Apis/Workspaces/useGetWorkspaceById';
 
 export const WorkspaceLayout = ({ children }) => {
+  const navigate = useNavigate();
   const { workspaceId } = useParams();
+  const { error } = useGetWorkspaceDetailsById(workspaceId);
 
   useEffect(() => {
     if (!workspaceId) return;
 
     localStorage.setItem(LAST_WORKSPACE_KEY, workspaceId);
   }, [workspaceId]);
+
+  useEffect(() => {
+    if (error?.httpStatus !== 404) return;
+
+    if (localStorage.getItem(LAST_WORKSPACE_KEY) === workspaceId) {
+      localStorage.removeItem(LAST_WORKSPACE_KEY);
+    }
+
+    navigate('/home', { replace: true, state: { stayOnHome: true } });
+  }, [error, navigate, workspaceId]);
 
   return (
     <div className="relative h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.12),_transparent_24%),radial-gradient(circle_at_top_right,_rgba(245,158,11,0.12),_transparent_22%),linear-gradient(180deg,_color-mix(in_oklab,white_65%,hsl(var(--background)))_0%,_hsl(var(--background))_100%)]">

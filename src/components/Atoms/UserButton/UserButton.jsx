@@ -90,7 +90,6 @@ export default function UserButton() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
       <CreateWorkspaceModal />
     </>
   );

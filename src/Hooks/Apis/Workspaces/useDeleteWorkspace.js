@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { updateWorkspaceRequest } from '@/API/Workspace/workspace';
+import { deleteWorkspaceRequest } from '@/API/Workspace/workspace';
 import { useAuth } from '@/Hooks/Context/useAuth';
 import { useToast } from '@/Hooks/Context/useToast';
 
-export const useUpdateWorkspace = () => {
+export const useDeleteWorkspace = () => {
   const { auth } = useAuth();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
@@ -13,27 +13,26 @@ export const useUpdateWorkspace = () => {
     isPending,
     isError,
     isSuccess,
-    mutateAsync: updateWorkspaceMutation,
+    mutateAsync: deleteWorkspaceMutation,
   } = useMutation({
-    mutationFn: (data) => updateWorkspaceRequest({ ...data, token: auth?.token }),
+    mutationFn: (data) => deleteWorkspaceRequest({ ...data, token: auth?.token }),
     onSuccess: (_, variables) => {
-      console.log('Successfully updated workspace');
-      queryClient.invalidateQueries({
-        queryKey: [`getworkspaceById - ${variables.workspaceId}`],
-      });
+      console.log('Workspace Deleted Successfully');
       queryClient.invalidateQueries({
         queryKey: ['fetchWorkspaceByMember'],
       });
+      queryClient.removeQueries({
+        queryKey: [`getworkspaceById - ${variables.workspaceId}`],
+      });
       showToast({
-        title: 'Workspace updated successfully',
-        description: variables?.workspaceName || '',
+        title: 'Workspace deleted successfully',
       });
     },
     onError: (error) => {
-      console.log('Error while updating workspace', error);
+      console.log('Error while deleting workspace', error);
       showToast({
         type: 'error',
-        title: error?.message || 'Failed to update workspace',
+        title: error?.message || 'Failed to delete workspace',
       });
     },
   });
@@ -42,6 +41,6 @@ export const useUpdateWorkspace = () => {
     isPending,
     isError,
     isSuccess,
-    updateWorkspaceMutation,
+    deleteWorkspaceMutation,
   };
 };
