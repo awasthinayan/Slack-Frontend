@@ -7,7 +7,6 @@ const Modals = () => {
   return (
     <div>
       <CreateWorkspaceModal />
-      <CreateChannelModal />
       <WorkspacePreferencesModal />
       <ConfirmDialog />
       <CreateChannelModal />

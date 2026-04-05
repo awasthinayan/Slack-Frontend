@@ -5,6 +5,7 @@ import { useAuth } from '@/Hooks/Context/useAuth';
 import { ForgotPasswordPage } from '@/Pages/Auth/ForgotPasswordPage';
 import { SignInPage } from '@/Pages/Auth/SignInPage';
 import { SignUpPage } from '@/Pages/Auth/SignUpPage';
+import { ChannelPage } from '@/Pages/Channel/ChannelPage';
 import { Home } from '@/Pages/Home/Home';
 import { GlobalErrorHandler } from '@/Pages/NotFound/GlobalErrorHandler';
 import { WelcomePage } from '@/Pages/Welcome/WelcomePage';
@@ -42,6 +43,10 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/home" element={<Home />} />
         <Route path="/workspace/:workspaceId" element={<WorkspaceLayout />} />
+        <Route
+          path="/workspace/:workspaceId/channels/:channelId"
+          element={<ChannelPage />}
+        />
       </Route>
 
       <Route path="*" element={<GlobalErrorHandler />} />

@@ -34,7 +34,7 @@ export const fetchWorkspaceRequest = async ({ token }) => {
         },
       }
     );
-    console.log('Response for fetch workspace', response);
+    console.log('Response for fetch workspace by member id', response);
     return response?.data.data;
   } catch (error) {
     console.log(error);
@@ -49,7 +49,7 @@ export const getWorkspaceDetails = async (workspaceId, token) => {
         'x-access-token': token,
       },
     });
-    console.log('Response for fetch workspace', response);
+    console.log('Response for fetch workspace details', response);
     return response?.data.data;
   } catch (error) {
     console.log(error);

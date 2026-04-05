@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/Hooks/Context/useAuth';
-import { useCreateChannel } from '@/Hooks/Context/useCreateChannel';
 import { useWorkspacePreferencesModal } from '@/Hooks/Context/useWorkspacePreferencesModal';
 
 export const WorkspacePanelHeader = ({ workspace }) => {
@@ -19,7 +18,6 @@ export const WorkspacePanelHeader = ({ workspace }) => {
   const workspaceMembers = workspace?.members;
 
   const { auth } = useAuth();
-  const { openCreateChannelModal } = useCreateChannel();
   const { openWorkspacePreferencesModal } = useWorkspacePreferencesModal();
   const authUserId = auth?.user?._id || auth?.user?.id;
   const authUserEmail = auth?.user?.email;
@@ -84,18 +82,13 @@ export const WorkspacePanelHeader = ({ workspace }) => {
       </DropdownMenu>
 
       <div className="flex items-center gap-5">
-        <Button variant="ghost" size="icon-sm" className="cursor-pointer">
-          <ListFilterIcon className="size-4 text-green-600" />
+
+         <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+          <SquarePenIcon className="size-4 text-green-600" />
         </Button>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className="cursor-pointer"
-          onClick={() => openCreateChannelModal(workspace)}
-        >
-          <SquarePenIcon className="size-4 text-green-600" />
+        <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+          <ListFilterIcon className="size-4 text-green-600" />
         </Button>
       </div>
     </div>
