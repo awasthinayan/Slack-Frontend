@@ -12,16 +12,25 @@ import { SideBarItem } from '@/components/Atoms/SideBarItem/SideBarItem';
 import { WorkspacePanelHeader } from '@/components/Molecules/Workspace/WorkspacePanelHeader';
 import { WorkspacePanelSection } from '@/components/Molecules/Workspace/WorkspacePanelSection';
 import { useGetWorkspaceDetailsById } from '@/Hooks/Apis/Workspaces/useGetWorkspaceById';
+import { useAuth } from '@/Hooks/Context/useAuth';
 
 export const WorkspacePanel = () => {
   const { workspaceId } = useParams();
   const location = useLocation();
+  const { auth } = useAuth();
 
   const { isFetching, workspace, isSuccess } =
     useGetWorkspaceDetailsById(workspaceId);
 
   const channels = workspace?.channels ?? [];
   const members = workspace?.members ?? [];
+  const authUserId = auth?.user?._id || auth?.user?.id || null;
+
+  const isCurrentUserAdmin = members.some((member) => {
+    const memberUser = member?.memberId;
+    const memberId = memberUser?._id || memberUser?.id || memberUser;
+    return String(memberId) === String(authUserId) && member?.role === 'admin';
+  });
 
   if (isFetching) {
     return (
@@ -62,7 +71,10 @@ export const WorkspacePanel = () => {
           />
         </div>
 
-        <WorkspacePanelSection title="Channels">
+        <WorkspacePanelSection
+          title="Channels"
+          canCreate={isCurrentUserAdmin}
+        >
           {channels.length ? (
             channels.map((channel) => (
               <SideBarItem
@@ -84,7 +96,10 @@ export const WorkspacePanel = () => {
           )}
         </WorkspacePanelSection>
 
-        <WorkspacePanelSection title="Members">
+        <WorkspacePanelSection
+          title="Members"
+          canCreate={isCurrentUserAdmin}
+        >
           {members.length ? (
             members.map((member) => {
               const memberUser = member?.memberId;

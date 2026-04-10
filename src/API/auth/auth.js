@@ -49,3 +49,13 @@ export const ResetPasswordRequest = async (data) => {
     throw error;
   }
 };
+
+export const VerifyEmailRequest = async ({ email, token }) => {
+  try {
+    const response = await axios.post('/verifyEmail', { email, token });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

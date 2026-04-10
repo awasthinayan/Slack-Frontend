@@ -1,14 +1,32 @@
-import { ChevronDownIcon, ListFilterIcon, SquarePenIcon } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  ClipboardCopyIcon,
+  ListFilterIcon,
+  RefreshCwIcon,
+  SquarePenIcon,
+} from 'lucide-react';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useResetJoinCode } from '@/Hooks/Apis/Workspaces/useResetJoinCode';
 import { useAuth } from '@/Hooks/Context/useAuth';
+import { useToast } from '@/Hooks/Context/useToast';
 import { useWorkspacePreferencesModal } from '@/Hooks/Context/useWorkspacePreferencesModal';
 
 export const WorkspacePanelHeader = ({ workspace }) => {
@@ -17,8 +35,14 @@ export const WorkspacePanelHeader = ({ workspace }) => {
 
   const workspaceMembers = workspace?.members;
 
+  const { workspaceId } = useParams();
+
   const { auth } = useAuth();
   const { openWorkspacePreferencesModal } = useWorkspacePreferencesModal();
+  const { showToast } = useToast();
+  const { resetJoinCode, isResetting } = useResetJoinCode();
+  const [isJoinCodeDialogOpen, setIsJoinCodeDialogOpen] = useState(false);
+
   const authUserId = auth?.user?._id || auth?.user?.id;
   const authUserEmail = auth?.user?.email;
 
@@ -33,6 +57,26 @@ export const WorkspacePanelHeader = ({ workspace }) => {
       member?.role === 'admin'
     );
   });
+
+  const workspaceCode = workspace?.JoinCode ?? workspace?.joinCode;
+  const shareWorkspaceId = workspace?._id || workspace?.id || workspaceId;
+
+  const handleCopyJoinCode = async () => {
+    if (!workspaceCode) return;
+
+    await navigator.clipboard.writeText(workspaceCode);
+    showToast({
+      title: 'Join code copied',
+      description: workspaceCode,
+      type: 'success',
+    });
+  };
+
+  async function handleRefreshJoinCode() {
+    const workspaceId = workspace?._id || workspace?.id;
+    if (!workspaceId) return;
+    await resetJoinCode(workspaceId);
+  }
 
   return (
     <div className="flex items-center justify-between px-2 py-1 h-12.5 gap-5">
@@ -73,17 +117,86 @@ export const WorkspacePanelHeader = ({ workspace }) => {
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuSeparator />
-
-          <DropdownMenuItem className="cursor-pointer py-2">
-            Invite people to {workspaceName}
-          </DropdownMenuItem>
+          {isLoggedInUserisAdminofWorkspace && (
+            <DropdownMenuItem
+              className="cursor-pointer py-2"
+              onSelect={() => setIsJoinCodeDialogOpen(true)}
+            >
+              Invite people to {workspaceName}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="flex items-center gap-5">
+      {/* Dialog */}
+      <Dialog
+        open={isJoinCodeDialogOpen}
+        onOpenChange={setIsJoinCodeDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Workspace Join Code</DialogTitle>
+            <DialogDescription>
+              Copy this code and share it with someone so they can join this
+              workspace.
+            </DialogDescription>
+          </DialogHeader>
 
-         <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+          {/* Code Box */}
+          <div className="rounded-xl border border-muted p-4 bg-muted/80 text-sm font-semibold text-foreground">
+            {workspaceCode || 'No join code available'}
+          </div>
+
+          <DialogFooter className="flex gap-2">
+            <Button
+              type="button"
+              className="cursor-pointer"
+              onClick={handleCopyJoinCode}
+            >
+              <ClipboardCopyIcon className="h-4 w-4 mr-2" />
+              Copy code
+            </Button>
+
+            <DialogClose asChild>
+              <Button variant="outline" className="cursor-pointer">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+
+          <div className="mt-4 flex justify-center">
+            <a
+              href={`/workspaces/join/${shareWorkspaceId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl 
+               border border-blue-200 bg-blue-50 text-blue-600 
+               text-sm font-semibold tracking-wide
+               hover:bg-blue-100 hover:shadow-md hover:scale-[1.02]
+               active:scale-[0.98]
+               transition-all duration-200 ease-in-out"
+            >
+              🔗 Join via Link
+            </a>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex items-center justify-center gap-2 max-w-xs cursor-pointer"
+              onClick={handleRefreshJoinCode}
+              disabled={isResetting}
+            >
+              <RefreshCwIcon className="h-4 w-4" />
+              Refresh code
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex items-center gap-5">
+        <Button variant="ghost" size="icon-sm" className="cursor-pointer">
           <SquarePenIcon className="size-4 text-green-600" />
         </Button>
 

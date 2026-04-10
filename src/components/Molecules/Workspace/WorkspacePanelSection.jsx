@@ -10,6 +10,7 @@ export const WorkspacePanelSection = ({
   title,
   children,
   defaultOpen = true,
+  canCreate = false,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const {
@@ -48,7 +49,7 @@ export const WorkspacePanelSection = ({
           ) : null}
         </div>
 
-        {isChannelSection || isMemberSection ? (
+        {(isChannelSection || isMemberSection) && canCreate ? (
           <Button
             type="button"
             variant="ghost"
