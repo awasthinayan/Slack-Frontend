@@ -9,7 +9,7 @@ export const MemberPage = () => {
 
   if (isFetching) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] px-6 py-10">
+      <div className="h-full overflow-y-auto bg-[#f8fafc] px-6 py-10">
         <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
             Loading Member...
@@ -21,7 +21,7 @@ export const MemberPage = () => {
 
   if (!isSuccess) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] px-6 py-10">
+      <div className="h-full overflow-y-auto bg-[#f8fafc] px-6 py-10">
         <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
             Member Page
@@ -35,7 +35,7 @@ export const MemberPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] px-6 py-10">
+    <div className="h-full overflow-y-auto bg-[#f8fafc] px-6 py-10">
       <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
           Member Page

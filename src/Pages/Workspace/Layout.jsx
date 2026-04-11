@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 import { WorkspaceOptions } from '@/components/Organisms/Workspace/WorkspaceOptions';
 import { WorkspacePanel } from '@/components/Organisms/Workspace/WorkspacePanel';
@@ -12,7 +12,7 @@ import {
 import { LAST_WORKSPACE_KEY } from '@/Context/AuthContext';
 import { useGetWorkspaceDetailsById } from '@/Hooks/Apis/Workspaces/useGetWorkspaceById';
 
-export const WorkspaceLayout = ({ children }) => {
+export const WorkspaceLayout = () => {
   const navigate = useNavigate();
   const { workspaceId } = useParams();
   const { error } = useGetWorkspaceDetailsById(workspaceId);
@@ -72,7 +72,7 @@ export const WorkspaceLayout = ({ children }) => {
               defaultSize={80}
               minSize="25%"
             >
-              {children}
+              <Outlet />
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>

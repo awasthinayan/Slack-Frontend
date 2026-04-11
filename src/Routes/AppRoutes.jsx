@@ -48,15 +48,29 @@ export const AppRoutes = () => {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/home" element={<Home />} />
-        <Route path="/workspace/:workspaceId" element={<WorkspaceLayout />} />
-        <Route
-          path="/workspace/:workspaceId/channels/:channelId"
-          element={<ChannelPage />}
-        />
-        <Route
-          path="/workspace/:workspaceId/members/:memberId"
-          element={<MemberPage />}
-        />
+        <Route path="/workspace/:workspaceId" element={<WorkspaceLayout />}>
+          <Route
+            index
+            element={
+              <div className="flex h-full items-center justify-center px-6 py-10 text-slate-600">
+                <div className="w-full max-w-2xl rounded-2xl border border-slate-200 bg-white/85 p-8 shadow-sm backdrop-blur">
+                  <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
+                    Workspace Overview
+                  </p>
+                  <h1 className="mt-3 text-3xl font-bold text-slate-900">
+                    Select a channel or member
+                  </h1>
+                  <p className="mt-4 text-base leading-7">
+                    The left sidebar stays visible now, and the selected details
+                    open here in this same page area.
+                  </p>
+                </div>
+              </div>
+            }
+          />
+          <Route path="channels/:channelId" element={<ChannelPage />} />
+          <Route path="members/:memberId" element={<MemberPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<GlobalErrorHandler />} />

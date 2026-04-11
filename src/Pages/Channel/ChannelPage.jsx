@@ -1,22 +1,96 @@
+import { AlertTriangleIcon, Loader2Icon } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
-export const ChannelPage = () => {
-  const { workspaceId, channelId } = useParams();
+import { useGetChannelDetailsById } from '@/Hooks/Apis/Channels/useGetChannelDetails';
 
-  return (
-    <div className="min-h-screen bg-[#f8fafc] px-6 py-10">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
-          Channel Page
-        </p>
-        <h1 className="mt-3 text-3xl font-bold text-slate-900">{channelId}</h1>
-        <p className="mt-4 text-slate-600">
-          Opened as a separate page for workspace <span className="font-medium">{workspaceId}</span>.
-        </p>
-        <div className="mt-6 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
-          Channel id: <span className="font-medium text-slate-900">{channelId}</span>
+export const ChannelPage = () => {
+  const { channelId } = useParams();
+
+  const {
+    isFetching,
+    error,
+    isSuccess,
+    channel: channelDetails,
+  } = useGetChannelDetailsById(channelId);
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-[#1a1d21]">
+        <div className="flex items-center gap-2">
+          <Loader2Icon className="animate-spin h-5 w-5 text-white" />
+          <span className="text-white text-sm font-medium">Loading...</span>
         </div>
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full w-full bg-[#1a1d21] gap-2">
+        <AlertTriangleIcon className="h-8 w-8 text-red-400" />
+        <span className="text-red-400 text-sm font-medium">
+          Failed to load channel
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-full w-full bg-[#1a1d21]">
+
+      {/* Channel Header */}
+      <div className="flex items-center justify-between px-6 py-3 border-b border-[#3d3f45] bg-[#1a1d21] shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-white font-bold text-lg">
+            # {channelDetails?.ChannelName}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 text-gray-400 text-sm">
+          <span>Channel ID:</span>
+          <span className="text-gray-500">{channelId}</span>
+        </div>
+      </div>
+
+      {/* Channel Description (if available) */}
+      {channelDetails?.description && (
+        <div className="px-6 py-2 bg-[#1a1d21] border-b border-[#3d3f45]">
+          <p className="text-gray-400 text-sm">{channelDetails.description}</p>
+        </div>
+      )}
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-4">
+        {/* Empty State */}
+        {isSuccess && (
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+            <div className="bg-[#2c2d30] rounded-full p-5">
+              <span className="text-4xl">#</span>
+            </div>
+            <h2 className="text-white font-bold text-xl">
+              Welcome to # {channelDetails?.ChannelName}
+            </h2>
+            <p className="text-gray-400 text-sm max-w-sm">
+              This is the start of the{' '}
+              <span className="font-semibold text-white">
+                # {channelDetails?.ChannelName}
+              </span>{' '}
+              channel. Send a message to get started!
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Message Input */}
+      <div className="px-6 py-4 bg-[#1a1d21]">
+        <div className="flex items-center bg-[#2c2d30] rounded-lg px-4 py-3 gap-3 border border-[#3d3f45]">
+          <input
+            type="text"
+            placeholder={`Message # ${channelDetails?.ChannelName}`}
+            className="flex-1 bg-transparent text-white text-sm outline-none placeholder-gray-500"
+          />
+        </div>
+      </div>
+
     </div>
   );
 };

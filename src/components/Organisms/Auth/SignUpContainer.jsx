@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useSignup } from '@/Hooks/Apis/Auth/useSignup';
+import { useToast } from '@/Hooks/Context/useToast';
 
 import { SignUpCard } from './SignUpCard';
+
+const SIGNUP_SUCCESS_REDIRECT_DELAY_MS = 4000;
 
 export const SignUpContainer = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +16,10 @@ export const SignUpContainer = () => {
     confirmPassword: '',
   });
   const [validationError, setValidationError] = useState('');
+  const hasHandledSuccess = useRef(false);
 
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const { isPending, isSuccess, isError, error, signUpMutation } = useSignup();
 
@@ -59,10 +64,22 @@ export const SignUpContainer = () => {
     : '';
 
   useEffect(() => {
-    if (isSuccess) {
+    if (!isSuccess || hasHandledSuccess.current) return;
+
+    hasHandledSuccess.current = true;
+
+    showToast({
+      title: 'Registration successful',
+      description:
+        'Your account has been created successfully. Please check your email for verification before signing in.',
+    });
+
+    const redirectTimeout = setTimeout(() => {
       navigate('/signin');
-    }
-  }, [navigate, isSuccess]);
+    }, SIGNUP_SUCCESS_REDIRECT_DELAY_MS);
+
+    return () => clearTimeout(redirectTimeout);
+  }, [isSuccess, navigate, showToast]);
 
   return(
   <SignUpCard
