@@ -1,6 +1,8 @@
 import { AlertTriangleIcon, Loader2Icon } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
+import { ChannelHeader } from '@/components/Molecules/Channel/ChannelHeader';
+import { ChatInput } from '@/components/Molecules/ChatInput/ChatInput';
 import { useGetChannelDetailsById } from '@/Hooks/Apis/Channels/useGetChannelDetails';
 
 export const ChannelPage = () => {
@@ -37,14 +39,10 @@ export const ChannelPage = () => {
 
   return (
     <div className="flex flex-col h-full w-full bg-[#1a1d21]">
-
       {/* Channel Header */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-[#3d3f45] bg-[#1a1d21] shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="text-white font-bold text-lg">
-            # {channelDetails?.ChannelName}
-          </span>
-        </div>
+        <ChannelHeader name={channelDetails.ChannelName} />
+
         <div className="flex items-center gap-1 text-gray-400 text-sm">
           <span>Channel ID:</span>
           <span className="text-gray-500">{channelId}</span>
@@ -81,16 +79,13 @@ export const ChannelPage = () => {
       </div>
 
       {/* Message Input */}
-      <div className="px-6 py-4 bg-[#1a1d21]">
-        <div className="flex items-center bg-[#2c2d30] rounded-lg px-4 py-3 gap-3 border border-[#3d3f45]">
-          <input
-            type="text"
-            placeholder={`Message # ${channelDetails?.ChannelName}`}
-            className="flex-1 bg-transparent text-white text-sm outline-none placeholder-gray-500"
-          />
-        </div>
+      <div className="px-4 py-4 bg-[#1a1d21] border-t border-[#3d3f45]">
+        <ChatInput />
+        <p className="text-xs text-gray-500 text-right mt-1">
+          <strong className="text-gray-400">Shift + Enter</strong> to create a
+          new line
+        </p>
       </div>
-
     </div>
   );
 };

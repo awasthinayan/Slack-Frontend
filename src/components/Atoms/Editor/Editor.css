@@ -1,0 +1,17 @@
+.editor-wrapper .ql-toolbar {
+  border-bottom: 1px solid #cbd5e1 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.editor-wrapper .ql-container {
+  border: none !important;
+  min-height: 40px;
+  font-size: 14px;
+}
+
+.editor-wrapper .ql-editor {
+  min-height: 40px;
+  padding: 10px 14px;
+}

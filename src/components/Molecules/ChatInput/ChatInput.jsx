@@ -2,7 +2,7 @@ import { Editor } from '@/components/Atoms/Editor/Editor';
 
 export const ChatInput = () => {
   return (
-    <div>
+    <div className='w-full'>
       <Editor 
         variant="create"
         onSubmit={() => {}}

@@ -1,4 +1,5 @@
 import './index.css';
+import 'quill/dist/quill.snow.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
