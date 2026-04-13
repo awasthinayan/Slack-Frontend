@@ -1,44 +1,32 @@
+import { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 
+import { ChannelPreferencesModal } from '@/components/Molecules/ChannelPreferenceModal/ChannelPreferencesModal';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 export const ChannelHeader = ({ name }) => {
+  const [open, setOpen] = useState(false);
+  const { channelId, workspaceId } = useParams();
+
   return (
     <div className="bg-white border-b h-[50px] flex items-center px-4 overflow-hidden">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className="text-lg font-semibold px-2 w-auto overflow-hidden cursor-pointer"
-          >
-            <span># {name} </span>
-            <FaChevronDown className="size-3 ml-2" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle># {name}</DialogTitle>
-          </DialogHeader>
-          <div className="px-4 pb-4 flex flex-col gap-y-2">
-            <div className="px-5 py-4 bg-white rounded-lg border cursor-pointer hover:bg-gray">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold">Channel Name</p>
-                <p className="text-sm font-semibold">Edit</p>
-              </div>
-              <p className='text-sm'>
-                {name}
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Button
+        variant="ghost"
+        onClick={() => setOpen(true)}
+        className="text-lg font-semibold px-2 w-auto overflow-hidden cursor-pointer"
+      >
+        <span># {name}</span>
+        <FaChevronDown className="size-3 ml-2" />
+      </Button>
+
+      <ChannelPreferencesModal
+        open={open}
+        setOpen={setOpen}
+        name={name}
+        channelId={channelId}
+        workspaceId={workspaceId}
+      />
     </div>
   );
 };
