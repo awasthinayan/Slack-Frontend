@@ -10,7 +10,7 @@ export const ChannelHeader = ({ name }) => {
   const { channelId, workspaceId } = useParams();
 
   return (
-    <div className="bg-white border-b h-[50px] flex items-center px-4 overflow-hidden">
+    <div className="bg-white border-b h-[50px] flex items-center px-4 overflow-hidden rounded-lg">
       <Button
         variant="ghost"
         onClick={() => setOpen(true)}

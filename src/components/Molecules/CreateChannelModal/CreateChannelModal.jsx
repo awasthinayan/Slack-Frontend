@@ -31,11 +31,6 @@ export const CreateChannelModal = () => {
   async function handleFormSubmit(e) {
     e.preventDefault();
     const normalizedChannelName = channelName.trim().replace(/^#/, '');
-
-    console.log('submit fired');
-    console.log('workspaceId:', selectedWorkspaceId);
-    console.log('channelName:', normalizedChannelName);
-
     if (!normalizedChannelName || !selectedWorkspaceId) return;
 
     try {

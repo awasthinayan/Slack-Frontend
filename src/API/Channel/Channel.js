@@ -31,7 +31,7 @@ export const getChannelDetailsRequest = async ({ channelId, token }) => {
       },
     });
     ('');
-    console.log('response from getChannelDetailsRequest', response);
+    // console.log('response from getChannelDetailsRequest', response);
     return response?.data?.data;
   } catch (error) {
     console.log(error);

@@ -10,16 +10,12 @@ import { useToast } from '@/Hooks/Context/useToast';
 export const JoinPage = () => {
   const { showToast } = useToast();
 
-  const { workspaceId } = useParams(); // ✅ GET FROM PARAMS
+  const { workspaceId } = useParams(); 
 
   const { joinWorkspaceMutation } = useJoinWorkspaceRequest();
-  const { auth } = useAuth(); // ✅ FIXED
+  const { auth } = useAuth(); 
 
   const navigate = useNavigate();
-
-  console.log('auth', auth);
-  console.log('workspaceId', workspaceId);
-  console.log('auth?.user?._id', auth?.user?._id);
 
   const [code, setCode] = useState('');
 
