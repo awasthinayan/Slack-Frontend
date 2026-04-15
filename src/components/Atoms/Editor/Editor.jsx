@@ -3,12 +3,15 @@ import './Editor.css';
 import { PanelTopClose, PanelTopOpen } from 'lucide-react';
 import Quill from 'quill';
 import { useEffect, useRef, useState } from 'react';
+import { MdSend } from 'react-icons/md';
+
+import { Button } from '@/components/ui/button';
 
 import { Hint } from '../TooltipProvider/Tooltip';
 
 export const Editor = ({
   // variant = 'create',
-  // onSubmit,
+  onSubmit,
   // onCancel,
   placeholder,
   // disabled,
@@ -114,6 +117,22 @@ export const Editor = ({
               <PanelTopOpen className="h-4 w-4 cursor-pointer" />
             )}
           </button>
+        </Hint>
+        <Hint label="Send message" side="top" align="center">
+          <Button
+            className="ml-auto bg-[#007a6a] hover:bg-[#007a6a]/80 text-white cursor-pointer"
+            size="iconSm"
+            onClick={() => {
+              const messageContent = JSON.stringify(
+                quillRef.current?.getContents()
+              );
+              onSubmit({ body: messageContent });
+              quillRef.current?.setText('');
+            }}
+            disabled={false}
+          >
+            <MdSend className="size-7" />
+          </Button>
         </Hint>
       </div>
     </div>

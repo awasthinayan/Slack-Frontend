@@ -15,7 +15,7 @@ export const useGetMemberById = (id) => {
   } = useQuery({
     enabled: Boolean(id && auth?.token),
     queryFn: () => getMemberDetails(id, auth?.token),
-    queryKey: [`getMemberById - ${id}`],
+    queryKey:[`getMemberById - ${id}`],
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 10000,

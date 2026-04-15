@@ -16,7 +16,7 @@ export const createWorkspaceRequest = async ({
         },
       }
     );
-    console.log('Response for create workspace', response);
+    // console.log('Response for create workspace', response);
     return response?.data;
   } catch (error) {
     console.log(error);
@@ -35,7 +35,7 @@ export const fetchWorkspaceRequest = async ({ token }) => {
         },
       }
     );
-    console.log('Response for fetch workspace by member id', response);
+    // console.log('Response for fetch workspace by member id', response);
     return response?.data.data;
   } catch (error) {
     console.log(error.response);
@@ -50,7 +50,7 @@ export const getWorkspaceDetails = async (workspaceId, token) => {
         'x-access-token': token,
       },
     });
-    console.log('Response for fetch workspace details', response);
+    // console.log('Response for fetch workspace details', response);
     return response?.data.data;
   } catch (error) {
     console.log(error);
@@ -77,7 +77,7 @@ export const updateWorkspaceRequest = async ({
         },
       }
     );
-    console.log('Response for update workspace', response);
+    // console.log('Response for update workspace', response);
     return response?.data;
   } catch (error) {
     console.log(error);
@@ -95,7 +95,7 @@ export const deleteWorkspaceRequest = async ({ workspaceId, token }) => {
         },
       }
     );
-    console.log('Workspace Deleted Successfully', response);
+    // console.log('Workspace Deleted Successfully', response);
     return response?.data;
   } catch (error) {
     console.log(error);
@@ -119,7 +119,7 @@ export const addMemberToWorkspaceRequest = async ({
         },
       }
     );
-    console.log('Response for add member to workspace', response);
+    // console.log('Response for add member to workspace', response);
     return response?.data;
   } catch (error) {
     console.log(error);

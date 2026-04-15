@@ -48,7 +48,7 @@ export const updateChannelRequest = async ({
   try {
     const response = await axios.put(
       `/channel/${channelId}/update/${workspaceId}`,
-      {ChannelName},
+      { ChannelName },
       {
         headers: {
           'x-access-token': token,
@@ -73,5 +73,28 @@ export const deleteChannelRequest = async ({ channelId, token }) => {
   } catch (error) {
     console.log(error);
     throw error.response?.data;
+  }
+};
+
+export const getPaginatedMessages = async ({
+  channelId,
+  limit,
+  offset,
+  token,
+}) => {
+  try {
+    const response = await axios.get(`/messages/${channelId}`, {
+      params: {
+        limit: limit || 20,
+        offset: offset || 0,
+      },
+      headers: {
+        'x-access-token': token,
+      },
+    });
+    console.log('response from getPaginatedMessagesRequest', response);
+    return response?.data?.data;
+  } catch (error) {
+    console.log('Error in getPaginatedMessagesRequest', error);
   }
 };

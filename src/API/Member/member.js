@@ -2,7 +2,7 @@ import axios from '@/Config/Axios.Config';
 
 export const getMemberDetails = async (memberId, token) => {
   try {
-    const response = await axios.get(`/members/${memberId}`, {
+    const response = await axios.get(`/member/getMemberDetails/${memberId}`, {
       headers: {
         'x-access-token': token,
       },

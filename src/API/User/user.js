@@ -3,7 +3,7 @@ import axios from '@/Config/Axios.Config';
 export const fetchAllUsers = async () => {
   try {
     const response = await axios.get('/allUsers');
-    console.log('Response for fetch all users', response);
+    // console.log('Response for fetch all users', response);
 
     const payload = response?.data?.data;
     if (Array.isArray(payload)) {
