@@ -65,9 +65,17 @@ export const SignInContainer = () => {
       return;
     }
 
+    const resolvedUser = loginData.user || loginData;
+    const resolvedUsername =
+      resolvedUser.username ||
+      resolvedUser.name ||
+      loginData.username ||
+      loginData.name ||
+      'Someone';
     const user = {
-      _id: loginData._id || loginData.id,
-      email: loginData.email || formData.email.trim(),
+      _id: resolvedUser._id || resolvedUser.id,
+      email: resolvedUser.email || formData.email.trim(),
+      username: resolvedUsername,
     };
     const authExpiry = Date.now() + AUTH_SESSION_DURATION_MS;
 

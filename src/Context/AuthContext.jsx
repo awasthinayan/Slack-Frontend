@@ -1,4 +1,6 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+
+import { getMemberDetails } from '@/API/Member/member';
 
 const AuthContext = createContext();
 export const AUTH_USER_KEY = 'user';
@@ -30,16 +32,27 @@ const normalizeStoredUser = (user, token) => {
 
   const tokenPayload = decodeTokenPayload(token);
   const resolvedId = user?._id || user?.id || tokenPayload?._id || tokenPayload?.id;
+  const resolvedEmail = user?.email || tokenPayload?.email || null;
+  const resolvedUsername =
+    user?.username ||
+    user?.name ||
+    tokenPayload?.username ||
+    tokenPayload?.name ||
+    null;
 
   if (!user && !resolvedId && !tokenPayload?.email) {
     return null;
   }
 
+  console.log('resolved user', resolvedId, resolvedEmail, resolvedUsername);
   return {
     ...user,
     _id: resolvedId || null,
-    email: user?.email || tokenPayload?.email || null,
+    email: resolvedEmail,
+    username: resolvedUsername,
+    name: user?.name || tokenPayload?.name || resolvedUsername,
   };
+
 };
 
 export const AuthContextProvider = ({ children }) => {
@@ -88,6 +101,42 @@ export const AuthContextProvider = ({ children }) => {
       isloading: false,
     });
   }
+
+  useEffect(() => {
+    const syncCurrentUser = async () => {
+      if (!auth?.user?._id || !auth?.token) return;
+
+      try {
+        const memberDetails = await getMemberDetails(auth.user._id, auth.token);
+        const resolvedUsername =
+          memberDetails?.username ||
+          memberDetails?.name ||
+          null;
+
+        if (!resolvedUsername) return;
+
+        const currentUsername = auth.user?.username || auth.user?.name || null;
+        if (currentUsername === resolvedUsername) return;
+
+        const nextUser = {
+          ...auth.user,
+          username: resolvedUsername,
+          name: memberDetails?.name || auth.user?.name || resolvedUsername,
+          email: memberDetails?.email || auth.user?.email || null,
+        };
+
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
+        setAuth((current) => ({
+          ...current,
+          user: nextUser,
+        }));
+      } catch (error) {
+        console.log('Unable to hydrate current auth user', error);
+      }
+    };
+
+    syncCurrentUser();
+  }, [auth.user?._id, auth.token]);
 
   return <AuthContext.Provider value={{ auth, setAuth, logout }}>{children}</AuthContext.Provider>;
 };

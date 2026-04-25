@@ -7,6 +7,7 @@ import { SignInPage } from '@/Pages/Auth/SignInPage';
 import { SignUpPage } from '@/Pages/Auth/SignUpPage';
 import { VerifyEmailPage } from '@/Pages/Auth/VerifyEmailPage';
 import { ChannelPage } from '@/Pages/Channel/ChannelPage';
+import { DirectMessagePage } from '@/Pages/DirectMessage/DirectMessagePage';
 import { Home } from '@/Pages/Home/Home';
 import { MemberPage } from '@/Pages/Member/MemberPage';
 import { GlobalErrorHandler } from '@/Pages/NotFound/GlobalErrorHandler';
@@ -69,6 +70,7 @@ export const AppRoutes = () => {
             }
           />
           <Route path="channels/:channelId" element={<ChannelPage />} />
+          <Route path="dm/:memberId" element={<DirectMessagePage />} />
           <Route path="members/:memberId" element={<MemberPage />} />
         </Route>
       </Route>

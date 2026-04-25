@@ -3,10 +3,11 @@ import {
   FilePenLineIcon,
   HashIcon,
   Loader,
+  MessageSquare,
   SendIcon,
   UserIcon,
 } from 'lucide-react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { SideBarItem } from '@/components/Atoms/SideBarItem/SideBarItem';
 import { WorkspacePanelHeader } from '@/components/Molecules/Workspace/WorkspacePanelHeader';
@@ -110,18 +111,34 @@ export const WorkspacePanel = () => {
                 'Unknown member';
 
               return (
-                <SideBarItem
+                <div
                   key={memberUser?._id || member?._id || memberName}
-                  icon={UserIcon}
-                  label={memberName}
-                  Id={memberUser?._id}
-                  variant={
-                    location.pathname.includes(`/members/${memberUser?._id}`)
-                      ? 'active'
-                      : 'default'
-                  }
-                  type="member"
-                />
+                  className="flex items-center gap-1"
+                >
+                  <SideBarItem
+                    icon={UserIcon}
+                    label={memberName}
+                    Id={memberUser?._id}
+                    variant={
+                      location.pathname.includes(`/members/${memberUser?._id}`)
+                        ? 'active'
+                        : 'default'
+                    }
+                    type="member"
+                    className="flex-1 min-w-0"
+                  />
+                  {String(memberUser?._id) !== String(authUserId) ? (
+                    <Link
+                      to={`/workspace/${workspaceId}/dm/${memberUser?._id}`}
+                      className="rounded-xl p-2 text-slate-500 transition hover:bg-white/70 hover:text-slate-900"
+                      title={`Message ${memberName}`}
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                    </Link>
+                  ) : (
+                    <div className="h-8 w-8" aria-hidden="true" />
+                  )}
+                </div>
               );
             })
           ) : (

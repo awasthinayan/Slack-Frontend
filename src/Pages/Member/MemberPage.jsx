@@ -1,18 +1,21 @@
 import { HashIcon, MailIcon, UserIcon } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { useAuth } from '@/Hooks/Context/useAuth';
 import { useGetMemberById } from '@/Hooks/Apis/Members/useGetMemberById';
 
 export const MemberPage = () => {
   const { workspaceId, memberId } = useParams();
+  const navigate = useNavigate();
+  const { auth } = useAuth();
   const { isFetching, member, isSuccess } = useGetMemberById(memberId);
 
   if (isFetching) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#1a1d21]">
+      <div className="flex h-full items-center justify-center bg-green-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-600 border-t-[#4ECDC4]" />
-          <p className="text-sm text-slate-400">Loading member...</p>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-green-200 border-t-green-500" />
+          <p className="text-sm text-green-700">Loading member...</p>
         </div>
       </div>
     );
@@ -20,10 +23,10 @@ export const MemberPage = () => {
 
   if (!isSuccess) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#1a1d21]">
+      <div className="flex h-full items-center justify-center bg-green-50">
         <div className="text-center">
-          <UserIcon className="mx-auto mb-3 h-12 w-12 text-slate-600" />
-          <p className="text-slate-400">
+          <UserIcon className="mx-auto mb-3 h-12 w-12 text-green-400" />
+          <p className="text-green-700">
             Something went wrong loading member details.
           </p>
         </div>
@@ -31,74 +34,119 @@ export const MemberPage = () => {
     );
   }
 
-  // ✅ Generate avatar initials
   const displayName =
     member?.username || member?.name || member?.email || 'Unknown';
+
   const initials = displayName.slice(0, 2).toUpperCase();
 
-  // ✅ Generate consistent color from name
   const colors = [
-    'bg-rose-500',
-    'bg-violet-500',
-    'bg-blue-500',
+    'bg-green-500',
     'bg-emerald-500',
-    'bg-amber-500',
-    'bg-pink-500',
+    'bg-lime-500',
+    'bg-teal-500',
   ];
+
   const colorIndex = displayName.charCodeAt(0) % colors.length;
   const avatarColor = colors[colorIndex];
 
   return (
-    <div className="h-full overflow-y-auto bg-[#1a1d21]">
-      {/* ✅ Top Banner */}
-      <div className="h-32 w-full bg-gradient-to-r from-[#2c2d30] to-[#1a1d21]" />
+    <div className="relative h-full overflow-y-auto bg-green-50">
+      {/* 🌿 Soft background glow */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-green-200 via-green-100 to-transparent blur-3xl opacity-60" />
 
-      <div className="mx-auto max-w-2xl px-6 pb-10">
-        {/* ✅ Avatar — overlaps banner */}
-        <div className="-mt-12 mb-4 flex items-end justify-between">
-          <div
-            className={`flex h-24 w-24 items-center justify-center rounded-full 
-                          ${avatarColor} text-3xl font-bold text-white 
-                          ring-4 ring-[#1a1d21] shadow-xl`}
-          >
-            {initials}
+      <div className="mx-auto max-w-3xl px-6 py-10">
+        {/* 👤 HEADER */}
+        <div className="flex items-center justify-between mb-8">
+          {/* Left: Avatar + Info */}
+          <div className="flex items-center gap-5">
+            <div
+              className={`relative flex h-20 w-20 items-center justify-center rounded-full 
+          ${avatarColor} text-2xl font-bold text-white shadow-xl`}
+            >
+              {initials}
+
+              {/* 🟢 Online Indicator */}
+              <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-green-400 border-2 border-white" />
+            </div>
+
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">
+                {displayName}
+              </h1>
+              <p className="text-sm text-gray-600">{member?.email}</p>
+
+              {/* Status */}
+              <p className="text-xs text-green-600 mt-1 font-medium">
+                ● Active now
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center gap-3">
+            {String(memberId) !== String(auth?.user?._id) ? (
+              <button
+                onClick={() =>
+                  navigate(`/workspace/${workspaceId}/dm/${memberId}`)
+                }
+                className="px-4 py-2 rounded-xl bg-green-500 text-white text-sm font-medium shadow hover:bg-green-600 transition cursor-pointer"
+              >
+                Message
+              </button>
+            ) : null}
+
+            <button className="px-4 py-2 rounded-xl bg-white/70 backdrop-blur border border-gray-200 text-sm font-medium text-gray-700 hover:bg-white transition cursor-pointer">
+              More
+            </button>
           </div>
         </div>
 
-        {/* ✅ Name & Email */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">{displayName}</h1>
-          <p className="mt-1 text-sm text-slate-400">{member?.email}</p>
-        </div>
-
-        {/* ✅ Info Cards */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 rounded-xl bg-[#2c2d30] px-4 py-3 border border-[#3d3f45]">
-            <HashIcon className="h-4 w-4 shrink-0 text-slate-400" />
+        {/* 📦 INFO CARDS */}
+        <div className="flex flex-col gap-4">
+          {/* Member ID */}
+          <div
+            className="flex items-center gap-4 rounded-2xl 
+        bg-white/70 backdrop-blur-lg px-5 py-4 
+        border border-white/40 shadow-md hover:shadow-lg transition"
+          >
+            <HashIcon className="h-5 w-5 text-green-600" />
             <div>
-              <p className="text-xs text-slate-500">Member ID</p>
-              <p className="text-sm font-medium text-slate-200">
+              <p className="text-xs text-gray-500">Member ID</p>
+              <p className="text-sm font-medium text-gray-800">
                 {member?._id || memberId}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl bg-[#2c2d30] px-4 py-3 border border-[#3d3f45]">
-            <MailIcon className="h-4 w-4 shrink-0 text-slate-400" />
+          {/* Email */}
+          <div
+            className="flex items-center gap-4 rounded-2xl 
+        bg-white/70 backdrop-blur-lg px-5 py-4 
+        border border-white/40 shadow-md hover:shadow-lg transition"
+          >
+            <MailIcon className="h-5 w-5 text-green-600" />
             <div>
-              <p className="text-xs text-slate-500">Email</p>
-              <p className="text-sm font-medium text-slate-200">
+              <p className="text-xs text-gray-500">Email</p>
+              <p className="text-sm font-medium text-gray-800">
                 {member?.email || 'N/A'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl bg-[#2c2d30] px-4 py-3 border border-[#3d3f45]">
-            <UserIcon className="h-4 w-4 shrink-0 text-slate-400" />
+          {/* Username */}
+          <div
+            className="flex items-center gap-4 rounded-2xl 
+        bg-white/70 backdrop-blur-lg px-5 py-4 
+        border border-white/40 shadow-md hover:shadow-lg transition"
+          >
+            <UserIcon className="h-5 w-5 text-green-600" />
             <div>
-              <p className="text-xs text-slate-500">Username</p>
-              <p className="text-sm font-medium text-slate-200">
-                {member?.username || 'N/A'} is part of workspace:{workspaceId}
+              <p className="text-xs text-gray-500">Username</p>
+              <p className="text-sm font-medium text-gray-800">
+                {member?.username || 'N/A'}
+              </p>
+              <p className="text-xs text-green-700 mt-1">
+                Workspace: {workspaceId}
               </p>
             </div>
           </div>

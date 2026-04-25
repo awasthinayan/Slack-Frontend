@@ -25,7 +25,9 @@ export const useGetChannelsMessage = (channelId) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewMessage = () => {
+    const handleNewMessage = (payload) => {
+      if (payload?.roomId !== channelId) return;
+
       queryClient.invalidateQueries({
         queryKey: ['getPaginatedMessages', channelId],
       });

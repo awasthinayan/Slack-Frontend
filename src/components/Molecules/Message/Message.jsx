@@ -3,30 +3,26 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const Message = ({ authorImage, authorName, createdAt, body }) => {
   return (
-    <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
-      <div className="flex items-center gap-2">
-        <button>
-          <Avatar>
-            <AvatarImage className="rounded-md" src={authorImage} />
-            <AvatarFallback className="rounded-md bg-sky-500 text-white text-sm">
-              {authorName ? authorName.charAt(0).toUpperCase() : 'U'}
-            </AvatarFallback>
-          </Avatar>
-        </button>
+    <div className="px-6 py-2 hover:bg-green-100/40 transition rounded-lg">
+      <div className="flex items-start gap-3">
+        <Avatar>
+          <AvatarImage className="rounded-md" src={authorImage} />
+          <AvatarFallback className="rounded-md bg-green-500 text-white text-sm">
+            {authorName ? authorName.charAt(0).toUpperCase() : 'U'}
+          </AvatarFallback>
+        </Avatar>
 
-        <div className="flex flex-col w-full overflow'h'dden">
-          <div className="text-xs">
-            <button className="font-bold text-primary hover:underline">
-              {authorName}
-            </button>
-            <span>&nbsp;&nbsp;</span>
-            <button className="text-xs text-muted-foreground hover:underline">
+        <div className="flex flex-col w-full overflow-hidden">
+          <div className="text-xs flex items-center gap-2">
+            <span className="font-semibold text-gray-800">{authorName}</span>
+            <span className="text-gray-500 text-[11px]">
               {createdAt || 'Just now'}
-            </button>
+            </span>
           </div>
 
-          <MessageRenderer value={body} />
-          {/* Any images if there are */}
+          <div className="text-sm text-gray-800">
+            <MessageRenderer value={body} />
+          </div>
         </div>
       </div>
     </div>

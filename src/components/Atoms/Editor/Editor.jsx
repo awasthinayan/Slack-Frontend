@@ -9,23 +9,18 @@ import { Button } from '@/components/ui/button';
 
 import { Hint } from '../TooltipProvider/Tooltip';
 
-export const Editor = ({
-  // variant = 'create',
-  onSubmit,
-  // onCancel,
-  placeholder,
-  // disabled,
-  defaultValue,
-}) => {
-  // const [text, setText] = useState('');
+export const Editor = ({ onSubmit, onTextChange, placeholder, defaultValue }) => {
   const [isToolbarVisible, setIsToolbarVisible] = useState(false);
 
   const containerRef = useRef();
-  // const SubmitRef = useRef();
-  // const disabledRef = useRef(disabled);
   const placeholderRef = useRef(placeholder);
   const quillRef = useRef();
   const defaultValueRef = useRef(defaultValue);
+  const onTextChangeRef = useRef(onTextChange);
+
+  useEffect(() => {
+    onTextChangeRef.current = onTextChange;
+  }, [onTextChange]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -72,6 +67,12 @@ export const Editor = ({
     const quill = new Quill(editorContainer, options);
     quillRef.current = quill;
 
+    const handleTextChange = () => {
+      onTextChangeRef.current?.(quill.getText().trim());
+    };
+
+    quill.on('text-change', handleTextChange);
+
     if (defaultValueRef.current) {
       quill.setContents(defaultValueRef.current);
     }
@@ -79,6 +80,7 @@ export const Editor = ({
     quillRef.current.focus();
 
     return () => {
+      quill.off('text-change', handleTextChange);
       container.innerHTML = '';
     };
   }, []);
@@ -93,13 +95,14 @@ export const Editor = ({
 
   return (
     <div
-      className="flex flex-col border border-slate-300 rounded-md overflow-hidden 
-                  focus-within:shadow-sm focus-within:border-slate-400 bg-white 
-                  transition focus-within:ring-2"
+      className="flex flex-col rounded-xl overflow-hidden 
+                 bg-white/70 backdrop-blur-lg
+                 focus-within:ring-2 focus-within:ring-green-400
+                 transition shadow-sm"
     >
-      <div ref={containerRef} className="editor-wrapper" />
+      <div ref={containerRef} className="editor-wrapper px-3 pt-3 pb-1" />
 
-      <div className="flex items-center px-2 py-1  min-h-[32px]">
+      <div className="flex items-center px-3 py-2 border-t border-green-100/50">
         <Hint
           label={!isToolbarVisible ? 'Show toolbar' : 'Hide toolbar'}
           side="top"
@@ -107,31 +110,35 @@ export const Editor = ({
         >
           <button
             onClick={toggleToolbar}
-            title=""
-            className="flex items-center gap-1 text-xs text-gray-400 
-                   hover:text-gray-700 transition-colors px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
+            className="flex items-center justify-center 
+                       text-gray-400 hover:text-gray-700 
+                       transition p-1.5 rounded-lg hover:bg-green-100/50 cursor-pointer"
           >
             {isToolbarVisible ? (
-              <PanelTopClose className="h-4 w-4 cursor-pointer" />
+              <PanelTopClose className="h-4 w-4" />
             ) : (
-              <PanelTopOpen className="h-4 w-4 cursor-pointer" />
+              <PanelTopOpen className="h-4 w-4" />
             )}
           </button>
         </Hint>
+
         <Hint label="Send message" side="top" align="center">
           <Button
-            className="ml-auto bg-[#007a6a] hover:bg-[#007a6a]/80 text-white cursor-pointer"
+            className="ml-auto bg-green-600 hover:bg-green-700 
+                       text-white rounded-lg shadow-sm 
+                       hover:shadow-md transition-all cursor-pointer"
             size="iconSm"
             onClick={() => {
               const messageContent = JSON.stringify(
                 quillRef.current?.getContents()
               );
               onSubmit({ body: messageContent });
+              onTextChangeRef.current?.('');
               quillRef.current?.setText('');
             }}
             disabled={false}
           >
-            <MdSend className="size-7" />
+            <MdSend className="size-5" />
           </Button>
         </Hint>
       </div>
