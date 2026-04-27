@@ -1,29 +1,40 @@
 import Quill from 'quill';
-import { useEffect, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
 export const MessageRenderer = ({ value }) => {
-  const rendererRef = useRef(null);
-  const [isEmpty, setIsEmpty] = useState(false);
-
-  useEffect(() => {
-    if (!rendererRef.current) return;
+  const renderedContent = useMemo(() => {
+    if (!value) {
+      return {
+        html: '',
+        isEmpty: true,
+      };
+    }
 
     const quill = new Quill(document.createElement('div'));
     quill.disable();
 
-    const content = JSON.parse(value);
-    quill.setContents(content);
-
-    const isContentEmpty = quill.getText().trim().length === 0;
-
-    setTimeout(() => {
-      setIsEmpty(isContentEmpty);
-    }, 0);
-
-    rendererRef.current.innerHTML = quill.root.innerHTML;
+    try {
+      const content = JSON.parse(value);
+      quill.setContents(content);
+      return {
+        html: quill.root.innerHTML,
+        isEmpty: quill.getText().trim().length === 0,
+      };
+    } catch (error) {
+      console.log('Unable to parse message body', error);
+      return {
+        html: String(value),
+        isEmpty: !String(value).trim(),
+      };
+    }
   }, [value]);
 
-  if (isEmpty) return null;
+  if (renderedContent.isEmpty) return null;
 
-  return <div ref={rendererRef} className="ql-editor p-0" />;
+  return (
+    <div
+      className="ql-editor p-0"
+      dangerouslySetInnerHTML={{ __html: renderedContent.html }}
+    />
+  );
 };

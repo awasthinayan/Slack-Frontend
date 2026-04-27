@@ -138,6 +138,7 @@ export const DirectMessagePage = () => {
                 <Message
                   key={message._id}
                   body={message.body}
+                  image={message.image}
                   authorImage={message.SenderId?.avatar}
                   authorName={message.SenderId?.username || 'Unknown User'}
                   createdAt={message.createdAt}

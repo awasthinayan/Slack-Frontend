@@ -1,3 +1,4 @@
+
 import { Info } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -126,6 +127,7 @@ export const ChannelPage = () => {
                 <Message
                   key={message._id}
                   body={message.body}
+                  image={message.image}
                   authorImage={message.SenderId?.avatar}
                   authorName={message.SenderId?.username || 'Unknown User'}
                   createdAt={message.createdAt}

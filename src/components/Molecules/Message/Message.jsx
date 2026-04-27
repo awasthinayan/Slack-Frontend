@@ -1,7 +1,14 @@
 import { MessageRenderer } from '@/components/atoms/MessageRenderer/MessageRenderer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MessageImage } from '@/Features/Image/components/MessageImage';
 
-export const Message = ({ authorImage, authorName, createdAt, body }) => {
+export const Message = ({
+  authorImage,
+  authorName,
+  createdAt,
+  body,
+  image,
+}) => {
   return (
     <div className="px-6 py-2 hover:bg-green-100/40 transition rounded-lg">
       <div className="flex items-start gap-3">
@@ -23,6 +30,8 @@ export const Message = ({ authorImage, authorName, createdAt, body }) => {
           <div className="text-sm text-gray-800">
             <MessageRenderer value={body} />
           </div>
+
+          <MessageImage image={image} />
         </div>
       </div>
     </div>

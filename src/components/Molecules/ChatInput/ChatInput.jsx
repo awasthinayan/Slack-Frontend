@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Editor } from '@/components/Atoms/Editor/Editor';
+import { useMessageImageUpload } from '@/Features/Image/hooks/useMessageImageUpload';
 import { useAuth } from '@/Hooks/Context/useAuth';
 import { useSocket } from '@/Hooks/Context/useSocket';
 
@@ -16,6 +17,15 @@ export const ChatInput = ({
   const { auth } = useAuth();
   const typingTimerRef = useRef(null);
   const isTypingRef = useRef(false);
+  const {
+    imagePreviewUrls,
+    isUploadingImage,
+    addSelectedImages,
+    clearSelectedImages,
+    removeSelectedImage,
+    selectedImages,
+    uploadSelectedImage,
+  } = useMessageImageUpload();
   const activeRoomId = roomId || currentChannel;
   const typingDisplayName =
     auth.user?.username ||
@@ -25,7 +35,7 @@ export const ChatInput = ({
     return conversationId || activeRoomId;
   }, [conversationId, activeRoomId]);
 
-  const stopTyping = () => {
+  const stopTyping = useCallback(() => {
     if (!socket || !messageRoomId) return;
 
     socket.emit('UserStoppedTyping', {
@@ -34,7 +44,7 @@ export const ChatInput = ({
       userName: typingDisplayName,
     });
     isTypingRef.current = false;
-  };
+  }, [auth.user?._id, messageRoomId, socket, typingDisplayName]);
 
   const handleTextChange = (text) => {
     if (!socket || !messageRoomId || !workspaceId) return;
@@ -79,16 +89,20 @@ export const ChatInput = ({
       }
       stopTyping();
     };
-  }, [messageRoomId, socket]);
+  }, [messageRoomId, socket, stopTyping]);
 
-  async function submitHandler({ body }) {
+  async function submitHandler({ body, plainText }) {
     if (!socket || !messageRoomId || !workspaceId) {
       console.error('Missing required data:', {
         socket: !!socket,
         currentChannel: messageRoomId,
         workspaceId,
       });
-      return;
+      return false;
+    }
+
+    if (!plainText && !selectedImages.length) {
+      return false;
     }
 
     const messagePayload = isDirect
@@ -102,23 +116,42 @@ export const ChatInput = ({
           isDirect: false,
         };
 
-    socket.emit(
-      'NewMessage',
-      {
-        ...messagePayload,
-        body: body,
-        WorkspaceId: workspaceId,
-        SenderId: auth.user?._id,
-      },
-      (data) => {
-        console.log('Successfully sent message', data);
-        stopTyping();
-        if (typingTimerRef.current) {
-          clearTimeout(typingTimerRef.current);
-          typingTimerRef.current = null;
-        }
+    try {
+      const uploadedImage = await uploadSelectedImage();
+
+      const response = await new Promise((resolve) => {
+        socket.emit(
+          'NewMessage',
+          {
+            ...messagePayload,
+            body,
+            image: uploadedImage,
+            WorkspaceId: workspaceId,
+            SenderId: auth.user?._id,
+          },
+          (data) => {
+            resolve(data);
+          }
+        );
+      });
+
+      if (!response?.success) {
+        console.error('Failed to send message', response);
+        return false;
       }
-    );
+
+      console.log('Successfully sent message', response);
+      stopTyping();
+      if (typingTimerRef.current) {
+        clearTimeout(typingTimerRef.current);
+        typingTimerRef.current = null;
+      }
+      clearSelectedImages();
+      return true;
+    } catch (error) {
+      console.error('Error while sending message', error);
+      return false;
+    }
   }
 
   return (
@@ -128,6 +161,10 @@ export const ChatInput = ({
         onSubmit={submitHandler}
         onTextChange={handleTextChange}
         placeholder="Type your message here..."
+        imagePreviewUrls={imagePreviewUrls}
+        isUploadingImage={isUploadingImage}
+        onImageSelect={addSelectedImages}
+        onRemoveImage={removeSelectedImage}
       />
     </div>
   );
